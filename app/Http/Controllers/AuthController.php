@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -30,8 +31,12 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json([
+                'code' => 401,
+                'mensaje' => 'Credenciales invalidas',
+                'payload' => ''
+            ]);
         }
 
         return $this->respondWithToken($token);
@@ -78,10 +83,20 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $datosUsuario = auth()->user();
+        $datosUsuario->rol = DB::table('users')
+            ->join('roles', 'users.rol', '=', 'roles.id')
+            ->select('roles.rol')
+            ->get()[0]->rol;
+
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL()
+            'code' => 200,
+            'message' => 'Correcto',
+            'payload' => [
+                'datos_usuario' => $datosUsuario,
+                'access_token' => $token,
+                'expires_in' => auth()->factory()->getTTL()
+            ]
         ]);
     }
 
@@ -92,9 +107,10 @@ class AuthController extends Controller
             'username' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
+            'rol' => 'required|string',
         ]);
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(),400);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
         }
 
         $user = User::create(array_merge(
