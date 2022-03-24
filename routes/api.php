@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductosController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,4 +29,12 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
     Route::post('register', [AuthController::class, 'register']);
+});
+
+Route::group([
+    'prefix' => 'producto'
+], function ($router) {
+    Route::post('crear', [ProductosController::class, 'registrarProducto']);
+    Route::get('traer-categorias', [ProductosController::class, 'traerCategorias']);
+    Route::get('traer-subcategorias', [ProductosController::class, 'traerSubcategorias']);
 });
