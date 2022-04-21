@@ -34,7 +34,8 @@ Route::group([
 Route::group([
     'prefix' => 'producto'
 ], function ($router) {
-    Route::post('crear', [ProductosController::class, 'registrarProducto']);
+    Route::post('guardar', [ProductosController::class, 'registrarProducto']);
+    Route::get('traer-productos', [ProductosController::class, 'traerProductos']);
     Route::get('traer-categorias', [ProductosController::class, 'traerCategorias']);
     Route::get('traer-subcategorias', [ProductosController::class, 'traerSubcategorias']);
 });

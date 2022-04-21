@@ -94,8 +94,7 @@ class AuthController extends Controller
             'message' => 'Correcto',
             'payload' => [
                 'datos_usuario' => $datosUsuario,
-                'access_token' => $token,
-                'expires_in' => auth()->factory()->getTTL()
+                'access_token' => $token
             ]
         ]);
     }

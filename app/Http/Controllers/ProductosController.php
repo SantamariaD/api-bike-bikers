@@ -31,8 +31,8 @@ class ProductosController extends Controller
             if ($validador->fails()) {
                 //Mensaje de error
                 $respuesta = array(
-                    'codigo' => 500,
-                    'mensaje' => 'Los datos no son correctos.',
+                    'code' => 500,
+                    'message' => 'Los datos no son correctos.',
                     'payload' => [
                         'errores' => $validador->errors()
                     ]
@@ -52,21 +52,34 @@ class ProductosController extends Controller
 
                 //Mensaje de respuesta
                 $respuesta = array(
-                    'status' => 'correcto',
-                    'codigo' => 200,
-                    'mensaje' => 'Se creo correctamente el producto.',
+                    'code' => 200,
+                    'message' => 'Se creo correctamente el producto.',
+                    'payload' => ''
                 );
             }
         } else {
             //Mensaje de error
             $respuesta = array(
                 'status' => 'error',
-                'codigo' => 500,
-                'mensaje' => 'Informacion no valida.',
+                'code' => 500,
+                'message' => 'Informacion no valida.',
             );
         }
 
         //Retorno de respuesta en json
+        return response()->json($respuesta);
+    }
+
+    public function traerProductos()
+    {
+        $productos = Productos::all();
+
+        $respuesta = [
+            'code' => 200,
+            'message' => 'correcto',
+            'payload' => $productos
+        ];
+
         return response()->json($respuesta);
     }
 
